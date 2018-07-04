@@ -1,41 +1,18 @@
 /*
- * This file contains C routines for the MPI Casestudy.
- *
- * "pgmread" reads in a PGM picture and can be called as follows:
- *
- *    double buf[M][N];
- *    pgmread("edge.pgm", buf, M, N);
- *
- * "pgmwrite" writes an array as a PGM picture and can be called as follows:
- *
- *    double buf[M][N];
- *    pgmwrite("picture.pgm", buf, M, N);
- *
- * "pgmsize" returns the size of a PGM picture and can be called as follows:
- *
- *    int nx, ny;
- *    pgmsize("edge.pgm", &nx, &ny);
- *
- *  To access these routines, add the following to your program:
- *
- *    #include "pgmio.h"
- *
- *  Note: you MUST link with the maths library -lm to access fabs etc.
+ * Borrowed from David Henty at the EPCC :^)
  */
-
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-#define MAXLINE 128
+#include "main.h"
 
 /*
  *  Routine to get the size of a PGM data file
  *
  *  Note that this assumes a single line comment and no other white space.
  */
-
 void pgmsize(char *filename, int *nx, int *ny)
 {
   FILE *fp;
@@ -43,8 +20,8 @@ void pgmsize(char *filename, int *nx, int *ny)
   char *cret;
   int iret;
 
-  char dummy[MAXLINE];
-  int n = MAXLINE;
+  char dummy[MAX_LINE];
+  int n = MAX_LINE;
 
   if (NULL == (fp = fopen(filename,"r")))
   {
@@ -60,7 +37,6 @@ void pgmsize(char *filename, int *nx, int *ny)
   fclose(fp);
 }
 
-
 /*
  *  Routine to read a PGM data file into a 2D floating point array
  *  x[nx][ny]. Because of the way C handles (or fails to handle!)
@@ -68,19 +44,18 @@ void pgmsize(char *filename, int *nx, int *ny)
  *
  *  Note that this assumes a single line comment and no other white space.
  */
-
 void pgmread(char *filename, void *vx, int nx, int ny)
 {
   FILE *fp;
 
   int nxt, nyt, i, j, t;
-  char dummy[MAXLINE];
-  int n = MAXLINE;
+  char dummy[MAX_LINE];
+  int n = MAX_LINE;
 
   char *cret;
   int iret;
 
-  double *x = (double *) vx;
+  FLOAT_PRECISION *x = (FLOAT_PRECISION *) vx;
 
   if (NULL == (fp = fopen(filename,"r")))
   {
@@ -108,7 +83,6 @@ void pgmread(char *filename, void *vx, int nx, int ny)
    *  is not the same as the storage of a C array, hence the pointer
    *  arithmetic to access x[i][j].
    */
-
   for (j=0; j<ny; j++)
   {
     for (i=0; i<nx; i++)
@@ -127,17 +101,16 @@ void pgmread(char *filename, void *vx, int nx, int ny)
  *  x[nx][ny]. Because of the way C handles (or fails to handle!)
  *  multi-dimensional arrays we have to cast the pointer to void.
  */
-
 void pgmwrite(char *filename, void *vx, int nx, int ny)
 {
   FILE *fp;
 
   int i, j, k, grey;
 
-  double xmin, xmax, tmp, fval;
-  double thresh = 255.0;
+  FLOAT_PRECISION xmin, xmax, tmp, fval;
+  FLOAT_PRECISION thresh = 255.0;
 
-  double *x = (double *) vx;
+  FLOAT_PRECISION *x = (FLOAT_PRECISION *) vx;
 
   if (NULL == (fp = fopen(filename,"w")))
   {
@@ -145,12 +118,12 @@ void pgmwrite(char *filename, void *vx, int nx, int ny)
     exit(-1);
   }
 
-  printf("Writing %d x %d picture into file: %s\n", nx, ny, filename);
+  printf("\nWriting %d x %d picture into file: %s\n", nx, ny, filename);
+  printf("\n---------------------------------------\n\n");
 
   /*
    *  Find the max and min absolute values of the array
    */
-
   xmin = fabs(x[0]);
   xmax = fabs(x[0]);
 
@@ -176,13 +149,11 @@ void pgmwrite(char *filename, void *vx, int nx, int ny)
       /*
        *  Access the value of x[i][j]
        */
-
       tmp = x[j+ny*i];
 
       /*
        *  Scale the value appropriately so it lies between 0 and thresh
        */
-
       fval = thresh*((fabs(tmp)-xmin)/(xmax-xmin))+0.5;
       grey = (int) fval;
 
