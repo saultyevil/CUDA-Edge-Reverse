@@ -10,7 +10,7 @@
 #define NO_PAR_CONST 0
 #define STRING_NO_PAR_CONST '\0'
 
-#define FLOAT_PRECISION double
+#define FLOAT_PRECISION float
 
 /*
  * IO functions

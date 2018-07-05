@@ -61,10 +61,15 @@ extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
     int ny, int max_iter)
 {
     int i, buff_size, image_size;
+    float cuda_runtime;  // has to be a float for the CUDA functions :^)
+    cudaEvent_t cuda_start, cuda_stop;
     FLOAT_PRECISION *host_old = NULL,
                     *cuda_old = NULL,
                     *cuda_new = NULL,
                     *cuda_buff = NULL;
+
+    cudaEventCreate(&cuda_start);
+    cudaEventCreate(&cuda_stop);
 
     /*
      * Allocate memory on the device and copy the normalised host buff into the
@@ -88,6 +93,8 @@ extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
     cudaMemcpy(cuda_old, host_old, buff_size, cudaMemcpyHostToDevice);
     cudaMemcpy(cuda_buff, image_buff, image_size, cudaMemcpyHostToDevice);
 
+    free(host_old);
+
     /*
      * Begin image processing using CUDA
      *  - (16, 8) is 128 threads per block
@@ -95,14 +102,29 @@ extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
     dim3 n_threads(16, 8);
     dim3 n_blocks((nx + 2)/n_threads.x + 1, (ny + 2)/n_threads.y + 1);
 
+    cudaEventRecord(cuda_start, MASTER_GPU);
+
+    /*
+     * Call the CUDA kernel to do the image processing. The number of blocks
+     * created exceeds the number of threads required, but guarantees that all
+     * pixels get a CUDA code
+     */
     CUDA_edge_reverse<<<n_blocks, n_threads>>>(cuda_buff, cuda_old, nx, ny,
         max_iter);
+
+    cudaEventRecord(cuda_stop, MASTER_GPU);
+    cudaEventSynchronize(cuda_stop);
+    cudaEventElapsedTime(&cuda_runtime, cuda_start, cuda_stop);
 
     /*
      * Copy the device result into host memory and free the pointer
      */
     cudaMemcpy(image_buff, cuda_buff, image_size, cudaMemcpyDeviceToHost);
     cudaFree(cuda_buff);
+
+    printf("\n---------------------------------------\n");
+    printf("\nKernel runtime: %5.3f ms\n", cuda_runtime);
+    printf("\n---------------------------------------\n");
 
     return 0;
 }
