@@ -1,6 +1,6 @@
 # CUDA Edge Reverse
 
-Based on my previous repository, "MPI_image_processing". Takes in an edge image and re-creates the original image. The current implementation isn't perfect, but is a neat demonstration of using CUDA.
+Based on my previous repository, "MPI-Edge-Reverse". Takes in an edge image and re-creates the original image. The current implementation isn't perfect, but is a neat demonstration of using CUDA.
 
 ## Building
 
