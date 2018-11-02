@@ -1,0 +1,4 @@
+# Parameter :: Value
+MAX_ITER :: 2000
+INPUT_FILE :: ../edge_images/edge768x768.pgm
+OUTPUT_FILE :: ../output_images/image768x768.pgm

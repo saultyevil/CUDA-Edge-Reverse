@@ -57,8 +57,8 @@ void CUDA_edge_reverse(FLOAT_PRECISION *cuda_buff, FLOAT_PRECISION *cuda_old,
 
 }
 
-extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
-    int ny, int max_iter)
+extern "C"
+void cuda_wrapper(FLOAT_PRECISION *image_buff, int nx, int ny, int max_iter)
 {
     int i, buff_size, image_size;
     float cuda_runtime;  // has to be a float for the CUDA functions :^)
@@ -125,7 +125,4 @@ extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
     printf("\n---------------------------------------\n");
     printf("\nKernel runtime: %5.3f ms\n", cuda_runtime);
     printf("\n---------------------------------------\n");
-
-    return 0;
 }
-

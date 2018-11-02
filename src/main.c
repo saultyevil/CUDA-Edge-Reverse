@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+void cuda_wrapper(FLOAT_PRECISION *image_buff, int nx, int ny, int max_iter);
+
 int main(int argc, char *argv[])
 {
     int nx, ny, i_size, max_iter;
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
     /*
      * Call the CUDA dummy function to begin image processing
      */
-    CUDA_image_processing(image_buff, nx, ny, max_iter);
+    cuda_wrapper(image_buff, nx, ny, max_iter);
 
     /*
      * Write out the final image

@@ -15,6 +15,7 @@
 /*
  * IO functions
  */
+ 
 void pgmsize(char *filename, int *nx, int *ny);
 void pgmread(char *filename, void *vx, int nx, int ny);
 void pgmwrite(char *filename, void *vx, int nx, int ny);
@@ -24,8 +25,3 @@ int get_string_CL(char *par_name, char *parameter);
 int read_int(char *ini_file, char *par_name, int *parameter);
 int read_string(char *ini_file, char *par_string, char *parameter);
 
-/*
- * Dummy CUDA functions
- */
-extern "C" int CUDA_image_processing(FLOAT_PRECISION *image_buff, int nx,
-    int ny, int max_iter);
